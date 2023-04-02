@@ -1,0 +1,36 @@
+.half-box {
+    width: 33%;
+    display: inline-block;    
+}
+.card-header {
+    background-color: #ad7d29;
+    color: white;
+}
+
+body {
+    background: rgb(2,0,36);
+    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(91,76,8,1) 47%, rgba(253,117,0,1) 100%);
+}
+.header {
+    text-align: center;
+    background-color: #ad7d29;
+    padding:5px;
+}
+h1, h2, h3, h4 {
+    color: #fff;
+}
+label {
+    font-weight:600;
+}
+.btn-primary {
+    background-color: black;
+    border-color: black;
+}
+#instructions {
+    background-color: rgb(210, 210, 210);
+    padding:10px;
+}
+.btn-clear {
+    font-size:12px;
+    padding:2px;
+}
