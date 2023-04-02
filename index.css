@@ -35,7 +35,7 @@ label {
     padding:2px;
 }
 footer {
-    position: absolute;
+    position: fixed;
     top: 97%;
     font-size: 12px;
     background-color: black;
