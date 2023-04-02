@@ -34,3 +34,12 @@ label {
     font-size:12px;
     padding:2px;
 }
+footer {
+    position: absolute;
+    top: 97%;
+    font-size: 12px;
+    background-color: black;
+    color: white;
+    width:100%;
+    text-align: center;
+}
