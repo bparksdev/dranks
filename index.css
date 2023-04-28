@@ -5,6 +5,9 @@
 .card-header {
     background-color: #9a2828;
     color: white;
+    margin-left: -12px;
+    margin-right: -12px;  
+    font-size: 14px;  
 }
 
 body {

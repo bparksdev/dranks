@@ -28,7 +28,7 @@
                 </form>
                         
                 <div class="row" id="results">
-                    <div v-for="(drink, index) in drinkResults" class='card col-3 mb-3' :key="index" @click="getDetails(drink.idDrink)">
+                    <div v-for="(drink, index) in drinkResults" class='card col-4 mb-3' :key="index" @click="getDetails(drink.idDrink)">
                         <div class='card-header detail-link'>{{drink.strDrink}}</div>
                         <div class='card-body'>
                             <img :src="drink.strDrinkThumb" style="width:100%" />
@@ -38,7 +38,7 @@
 
                 <div class="card" id="card-details" style="display:none" v-if="drinkDetails">
                     <div class="card-header">
-                        <h3>Drink: <span id="drinkName">{{drinkDetails.strDrink}}</span></h3>
+                        <h3>{{drinkDetails.strDrink}}</h3>
                     </div>
                     <div class="card-body text-center">
                         <p v-if="drinkDetails.strGlass"><label>Suggested Glass:</label> <span id="glass">{{drinkDetails.strGlass}}</span> </p>
