@@ -3,17 +3,17 @@
     display: inline-block;    
 }
 .card-header {
-    background-color: #ad7d29;
+    background-color: #9a2828;
     color: white;
 }
 
 body {
-    background: rgb(2,0,36);
-    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(91,76,8,1) 47%, rgba(253,117,0,1) 100%);
+    background: #ce893e;
+    /*background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(91,76,8,1) 47%, rgba(253,117,0,1) 100%);*/
 }
 .header {
     text-align: center;
-    background-color: #ad7d29;
+    background-color: #9a2828;
     padding:5px;
 }
 h1, h2, h3, h4 {
@@ -23,8 +23,8 @@ label {
     font-weight:600;
 }
 .btn-primary {
-    background-color: black;
-    border-color: black;
+    background-color: #9a2828;
+    border-color: #9a2828;
 }
 #instructions {
     background-color: rgb(210, 210, 210);
@@ -43,3 +43,7 @@ footer {
     width:100%;
     text-align: center;
 }
+
+.col-3 {
+    padding: 0px;
+} 
