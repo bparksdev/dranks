@@ -12,19 +12,20 @@
         <script src="https://unpkg.com/vee-validate@2.0.0-rc.18/dist/vee-validate.js"></script>
         <script src="https://unpkg.com/axios@0.25.0/dist/axios.min.js"></script>
     </head>
-    <body  style="background-image:url(icon.png);background-repeat: repeat-x;background-size:20%;background-position-y: -102%;">
+    <body class="body">
+        <div class="container">
         <div id="app">
             <div class="header">
                 <h1>Dranks A Lot! <img src="icon.png" style="width:40px" /></h1>
             </div>
-            <div class="container-fluid" >
-                <h4>Search <button class="btn btn-small btn-primary btn-clear" id="btnClear" onclick="window.location=''">Clear</button></h4>
-                        
-                <form @submit.prevent="getResults" class="mb-3 text-center">
+            <div class="container-fluid">
+            
+                <form @submit.prevent="getResults" class="mb-3 text-center mt-3">
                     <input type="text" v-model="byName" name="byName" class="form-control half-box" placeholder="By Name" />
                     <span style="color:white">OR</span>
                     <input type="text" v-model="byIngredient" name="byIngredient" class="form-control half-box" placeholder="By Ingredient" />
                     <button type="submit" class="btn btn-small btn-primary">Search</button>
+                    <button class="btn btn-small btn-primary mr-2" id="btnClear" onclick="window.location=''">Reset</button>
                 </form>
                         
                 <div class="row" id="results">
@@ -36,8 +37,8 @@
                     </div>
                 </div>
 
-                <div class="card" id="card-details" style="display:none" v-if="drinkDetails">
-                    <div class="card-header">
+                <div class="card" id="card-details" style="display:none" v-if="drinkDetails" @click="hideDetails()">
+                    <div class="card-header detail">
                         <h3>{{drinkDetails.strDrink}}</h3>
                     </div>
                     <div class="card-body text-center">
@@ -50,7 +51,8 @@
                     </div>
                 </div>
             </div>   
-        </div>     
+        </div> 
+        </div>    
         <footer>
             &#169;2023 SkrapHeap Development
         </footer>    
@@ -88,12 +90,7 @@ new Vue({
             axios.get(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`)
             .then(response => {
                 this.drinkDetails = response.data.drinks[0];
-                console.log(this.drinkDetails)
-
-                //document.getElementById("drinkName").innerHTML = data.drinks[0].strDrink;
-                //document.getElementById("instructions").innerHTML = data.drinks[0].strInstructions;
-                //document.getElementById("picture").prop("src", data.drinks[0].strDrinkThumb)
-                //document.getElementById("glass").innerHTML = data.drinks[0].strGlass;
+                //console.log(this.drinkDetails)
                 var ingArray = [];
                 var ingList = "";
                 for(i=1; i<15; i++) {
@@ -115,6 +112,10 @@ new Vue({
             .catch(error => {
                 console.log(error);
             });
+        },
+        hideDetails: function() {
+            document.getElementById("card-details").style.display = 'none'; 
+            document.getElementById("results").style.display = 'flex';
         }
     }
 });
