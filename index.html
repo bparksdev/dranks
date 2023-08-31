@@ -24,8 +24,10 @@
                     <input type="text" v-model="byName" name="byName" class="form-control half-box" placeholder="By Name" />
                     <span style="color:white">OR</span>
                     <input type="text" v-model="byIngredient" name="byIngredient" class="form-control half-box" placeholder="By Ingredient" />
-                    <button type="submit" class="btn btn-small btn-primary">Search</button>
-                    <button class="btn btn-small btn-primary mr-2" id="btnClear" onclick="window.location=''">Reset</button>
+                    <div>
+                        <button type="submit" class="btn btn-small btn-primary">Search</button>
+                        <button class="btn btn-small btn-primary mr-2" id="btnClear" onclick="window.location=''">Reset</button>
+                    </div>
                 </form>
                         
                 <div class="row" id="results">
