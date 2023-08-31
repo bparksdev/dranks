@@ -13,18 +13,20 @@
         <script src="https://unpkg.com/axios@0.25.0/dist/axios.min.js"></script>
     </head>
     <body class="body">
-        <div class="container">
+        <div class="container-fluid">
         <div id="app">
             <div class="header">
                 <h1>Dranks A Lot! <img src="icon.png" style="width:40px" /></h1>
             </div>
-            <div class="container-fluid">
+            <div class="form">
             
                 <form @submit.prevent="getResults" class="mb-3 text-center mt-3">
-                    <input type="text" v-model="byName" name="byName" class="form-control half-box" placeholder="By Name" />
+                    <div class="text-center">
+                    <input type="text" v-model="byName" name="byName" class="form-control" placeholder="By Name" />
                     <span style="color:white">OR</span>
-                    <input type="text" v-model="byIngredient" name="byIngredient" class="form-control half-box" placeholder="By Ingredient" />
-                    <div>
+                    <input type="text" v-model="byIngredient" name="byIngredient" class="form-control" placeholder="By Ingredient" />
+                    </div>
+                    <div class="mt-2">
                         <button type="submit" class="btn btn-small btn-primary">Search</button>
                         <button class="btn btn-small btn-primary mr-2" id="btnClear" onclick="window.location=''">Reset</button>
                     </div>
