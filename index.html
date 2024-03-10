@@ -58,7 +58,7 @@
         </div> 
         </div>    
         <footer>
-            &#169;2023 SkrapHeap Development
+            &#169;2024 SkrapHeap Development
         </footer>    
     </body>
 </html>
@@ -79,7 +79,6 @@ new Vue({
             document.getElementById("card-details").style.display = 'none';
             document.getElementById("results").style.display = 'flex';
             if( this.byIngredient && this.byIngredient.toLowerCase().trim() == 'coke') {
-                //.toLowerCase().trim()
                 this.byIngredient = 'coca-cola';
             }
             const uri = this.byName.length ? `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${this.byName}` : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${this.byIngredient}`;
