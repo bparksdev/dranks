@@ -101,9 +101,9 @@ footer {
         width:33%;
         margin-left: 33%;
     }
-    .container-fluid {
+    /*.container-fluid {
         width: 70%;
-    }    
+    }  */  
     /* big landscape tablets, laptops, and desktops */ 
 }
 @media (min-width:1281px) { 
@@ -111,9 +111,10 @@ footer {
         width:33%;
         margin-left: 33%;
     }
+    /*
     .container-fluid {
         width: 70%;
-    }     
+    }*/
 
     /* hi-res laptops and desktops */ 
 

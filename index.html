@@ -78,6 +78,9 @@ new Vue({
         getResults() {
             document.getElementById("card-details").style.display = 'none';
             document.getElementById("results").style.display = 'flex';
+            if( this.byIngredient && this.byIngredient == 'coke') {
+                this.byIngredient = 'coca-cola';
+            }
             const uri = this.byName.length ? `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${this.byName}` : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${this.byIngredient}`;
             axios.get(uri)
                 .then(response => {
