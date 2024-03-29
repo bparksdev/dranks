@@ -3,7 +3,7 @@
     display: inline-block;    
 }
 .card-header {
-    background-color: #9a2828;
+    background-color: #9a8b44;
     color: white;
     margin-left: -12px;
     margin-right: -12px;  
@@ -11,7 +11,7 @@
 }
 
 .detail {
-    background-color: #9a2828;
+    background-color: #9a8b44;
     color: white;
     font-size: 14px;  
     margin-left: 0px;
@@ -31,7 +31,7 @@ body {
 
 .header {
     text-align: center;
-    background-color: #9a2828;
+    background-color: #9a8b44;
     padding:5px;
 }
 h1, h2, h3, h4 {
@@ -41,8 +41,8 @@ label {
     font-weight:600;
 }
 .btn-primary {
-    background-color: #9a2828;
-    border-color: #9a2828;
+    background-color: #9a8b44;
+    border-color: #9a8b44;
 }
 #instructions {
     background-color: rgb(210, 210, 210);
