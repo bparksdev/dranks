@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Bar Companion</title>
+        <link rel="icon" type="image/png" href="icon.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css">
         <link rel="stylesheet" href="index.css">
@@ -14,51 +16,90 @@
     </head>
     <body class="body">
         <div class="container-fluid">
-        <div id="app">
+        <div id="app" class="app-shell">
             <div class="header">
-                <h1>Bar Companion <img src="icon.png" style="width:40px" /></h1>
-                <h3 class="text-center">Find it. Enjoy it.</h3>
+                <h1 class="header-title">Bar Companion <img src="icon.png" class="header-icon" alt="Bar Companion icon" /></h1>
+                <h3 class="text-center">Find it. Make it. Enjoy it.</h3>
             </div>
-            <div class="form">
-                <form @submit.prevent="getResults" class="mb-3 text-center mt-3">
+            <nav class="top-nav">
+                <button @click="currentView = 'search'" :class="{'active': currentView === 'search'}" class="nav-btn">Home</button>
+                <button @click="showMyDranks()" :class="{'active': currentView === 'saved'}" class="nav-btn">My Dranks</button>
+            </nav>
+            <div class="form" v-if="currentView === 'search'">
+                <form @submit.prevent="getResults" class="mb-3 text-center mt-3 search-form">
                     <div class="text-center">
-                    <input type="text" v-model="byName" name="byName" class="form-control" placeholder="By Name" />
-                    <span style="color:white">OR</span>
-                    <input type="text" v-model="byIngredient" name="byIngredient" class="form-control" placeholder="By Ingredient" />
+                    <input type="text" v-model="byName" name="byName" class="form-control search-input" placeholder="Search by name" />
+                    <span class="search-or">OR</span>
+                    <input type="text" v-model="byIngredient" name="byIngredient" class="form-control search-input" placeholder="Search by ingredient" />
                     </div>
-                    <div class="mt-2">
-                        <button type="submit" class="btn btn-small btn-primary">Search</button>
-                        <button class="btn btn-small btn-primary mr-2" id="btnClear" onclick="window.location=''">Reset</button>
+                    <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-primary px-4">Search</button>
+                        <button class="btn btn-outline-light px-4" id="btnClear" onclick="window.location=''">Reset</button>
                     </div>
                 </form>
+                
+                <div class="text-center my-4">
+                    <p class="text-muted mb-3">OR</p>
+                    <button type="button" @click="getSurpriseMe" class="btn btn-success px-4">Surprise Me!</button>
+                </div>
                         
-                <div class="row" id="results">
-                    <div v-for="(drink, index) in drinkResults" class='card col-4 mb-3' :key="index" @click="getDetails(drink.idDrink)">
+                <div class="row g-3" id="results">
+                    <div v-for="(drink, index) in drinkResults" class='col-6' :key="index">
+                        <div class='card drink-card h-100' @click="getDetails(drink.idDrink)">
                         <div class='card-header detail-link'>{{drink.strDrink}}</div>
                         <div class='card-body'>
-                            <img :src="drink.strDrinkThumb" style="width:100%" />
+                            <img :src="drink.strDrinkThumb" class="drink-thumb" :alt="drink.strDrink" />
+                        </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card" id="card-details" style="display:none" v-if="drinkDetails" @click="hideDetails()">
-                    <div class="card-header detail">
-                        <h3>{{drinkDetails.strDrink}}</h3>
-                    </div>
-                    <div class="card-body text-center">
-                        <p v-if="drinkDetails.strGlass"><label>Suggested Glass:</label> <span id="glass">{{drinkDetails.strGlass}}</span> </p>
-                        <p id=""><label>Ingredients:</label><br />
-                            <span id="ingredients"></span>
-                        </p>
-                        <p id="instructions">{{drinkDetails.strInstructions}}</p>
-                        <img id="picture" style="width:50%" class="text-center" :src="drinkDetails.strDrinkThumb" />
+                <div v-if="hasSearched && drinkResults.length === 0" class="no-results text-center mt-3">
+                    No drinks found. Try a different ingredient.
+                </div>
+            </div>
+            <div class="form" v-if="currentView === 'saved'">
+                <h4 class="text-center mb-3">My Saved Dranks</h4>
+                <div class="row g-3" v-if="savedDranks.length > 0">
+                    <div v-for="(drink, index) in savedDranks" class='col-6' :key="drink.idDrink">
+                        <div class='card drink-card h-100' @click="getDetails(drink.idDrink)">
+                        <div class='card-header detail-link'>{{drink.strDrink}}</div>
+                        </div>
                     </div>
                 </div>
-            </div>   
+                <div v-else class="no-results text-center mt-3">
+                    No saved drinks yet. Search for drinks and save your favorites!
+                </div>
+            </div>
+            
+            <div class="card details-card" id="card-details" style="display:none" v-if="drinkDetails">
+                <div class="card-header detail">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>{{drinkDetails.strDrink}}</h3>
+                        <div class="header-buttons d-flex gap-2 align-items-center">
+                            <button @click.stop="saveDrink(drinkDetails)" class="btn btn-primary btn-sm" v-if="!isDrinkSaved(drinkDetails.idDrink)" title="Save to My Dranks">
+                                Save <i class="fas fa-bookmark"></i>
+                            </button>
+                            <button @click.stop="removeDrink(drinkDetails.idDrink)" class="btn btn-outline-danger btn-sm btn-remove" v-else title="Remove from My Dranks">
+                                Remove <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="close-btn" @click="hideDetails()">&times;</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <p v-if="drinkDetails.strGlass"><label>Suggested Glass:</label> <span id="glass">{{drinkDetails.strGlass}}</span> </p>
+                    <p id=""><label>Ingredients:</label><br />
+                        <span id="ingredients"></span>
+                    </p>
+                    <p id="instructions">{{drinkDetails.strInstructions}}</p>
+                    <img id="picture" class="detail-picture text-center" :src="drinkDetails.strDrinkThumb" :alt="drinkDetails.strDrink" />
+                </div>
+            </div>
         </div> 
         </div>    
         <footer>
-            &#169;2024 SkrapHeap Development
+            &#169;2026 SkrapHeap Development
         </footer>    
     </body>
 </html>
@@ -71,28 +112,133 @@ new Vue({
             byName: "",
             byIngredient: "",
             drinkResults: [],
-            drinkDetails: []
+            drinkDetails: [],
+            hasSearched: false,
+            currentView: 'search',
+            savedDranks: []
         }
-    },    
-    methods:{
+    },
+    mounted() {
+        this.loadSavedDranks();
+    },
+    methods: {
+        convertMlToOz(measurement) {
+            if (!measurement) return measurement;
+            
+            // Match number followed by "ml"
+            const mlMatch = measurement.match(/^([\d.]+)\s*ml$/i);
+            if (mlMatch) {
+                const ml = parseFloat(mlMatch[1]);
+                const oz = ml / 29.574;
+                // Round to nearest 0.5
+                const rounded = Math.round(oz * 2) / 2;
+                return rounded + " oz (" + ml + " ml)";
+            }
+            
+            // Match number followed by "cl"
+            const clMatch = measurement.match(/^([\d.]+)\s*cl$/i);
+            if (clMatch) {
+                const cl = parseFloat(clMatch[1]);
+                const oz = cl / 2.957;
+                // Round to nearest 0.5
+                const rounded = Math.round(oz * 2) / 2;
+                return rounded + " oz (" + cl + " cl)";
+            }
+            
+            return measurement;
+        },
+        getIngredientVariants(ingredient) {
+            const value = (ingredient || "").trim().toLowerCase();
+            const aliasMap = {
+                "coke": ["coca-cola", "cola"],
+                "tonic": ["tonic water"],
+                "soda": ["soda water", "club soda"],
+                "lemon": ["lemon juice"],
+                "lime": ["lime juice"]
+            };
+
+            const variants = [value];
+
+            if (aliasMap[value]) {
+                variants.push(...aliasMap[value]);
+            }
+
+            if (value && !value.includes("water")) {
+                variants.push(`${value} water`);
+            }
+
+            return [...new Set(variants.filter(Boolean))];
+        },
         getResults() {
             document.getElementById("card-details").style.display = 'none';
             document.getElementById("results").style.display = 'flex';
-            if( this.byIngredient && this.byIngredient.toLowerCase().trim() == 'coke') {
-                this.byIngredient = 'coca-cola';
+            const byName = (this.byName || "").trim();
+            const byIngredient = (this.byIngredient || "").trim();
+
+            if(!byName && !byIngredient) {
+                this.drinkResults = [];
+                this.hasSearched = false;
+                return;
             }
-            const uri = this.byName.length ? `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${this.byName}` : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${this.byIngredient}`;
-            axios.get(uri)
-                .then(response => {
-                    this.drinkResults = response.data.drinks
+
+            // Enforce only one search type at a time
+            if (byName && byIngredient) {
+                // Clear ingredient if both are filled, prioritize name search
+                this.byIngredient = "";
+            }
+
+            this.hasSearched = true;
+
+            if (byName.length) {
+                const uri = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${encodeURIComponent(byName)}`;
+
+                axios.get(uri)
+                    .then(response => {
+                        const drinks = Array.isArray(response.data.drinks)
+                            ? response.data.drinks.filter(drink => drink && drink.idDrink && drink.strDrink)
+                            : [];
+                        this.drinkResults = drinks;
+                    })
+                    .catch(error => {
+                        this.drinkResults = [];
+                        console.log(error);
+                    });
+
+                return;
+            }
+
+            const ingredientVariants = this.getIngredientVariants(byIngredient);
+            const requests = ingredientVariants.map(ingredient => {
+                const uri = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(ingredient)}`;
+                return axios.get(uri)
+                    .then(response => Array.isArray(response.data.drinks) ? response.data.drinks : [])
+                    .catch(() => []);
+            });
+
+            Promise.all(requests)
+                .then(resultSets => {
+                    const merged = [];
+                    const seen = new Set();
+
+                    resultSets.flat().forEach(drink => {
+                        if (drink && drink.idDrink && drink.strDrink && !seen.has(drink.idDrink)) {
+                            seen.add(drink.idDrink);
+                            merged.push(drink);
+                        }
+                    });
+
+                    this.drinkResults = merged;
                 })
                 .catch(error => {
+                    this.drinkResults = [];
                     console.log(error);
                 });
         },
         getDetails: function(drinkID) {
             //console.log(drinkID);
-            document.getElementById("results").style.display = 'none';
+            if (this.currentView === 'search') {
+                document.getElementById("results").style.display = 'none';
+            }
 
             axios.get(`https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${drinkID}`)
             .then(response => {
@@ -105,7 +251,8 @@ new Vue({
                     meas = "strMeasure" + i;
                     if(this.drinkDetails[ing]) {
                         if(this.drinkDetails[meas] != null) {
-                            ingArray.push(this.drinkDetails[meas] + " " + this.drinkDetails[ing] + " <br /> ")
+                            const convertedMeasure = this.convertMlToOz(this.drinkDetails[meas]);
+                            ingArray.push(convertedMeasure + " " + this.drinkDetails[ing] + " <br /> ")
 
                         } else {
                             ingArray.push( this.drinkDetails[ing])
@@ -115,6 +262,7 @@ new Vue({
                 ingList = ingArray.toString()
                 document.getElementById("ingredients").innerHTML = ingList.replace(/,/g,"")
                 document.getElementById("card-details").style.display = 'block';
+                document.getElementById("card-details").scrollIntoView({ behavior: 'smooth', block: 'start' });
             })
             .catch(error => {
                 console.log(error);
@@ -122,7 +270,55 @@ new Vue({
         },
         hideDetails: function() {
             document.getElementById("card-details").style.display = 'none'; 
-            document.getElementById("results").style.display = 'flex';
+            if (this.currentView === 'search') {
+                document.getElementById("results").style.display = 'flex';
+            }
+        },
+        getSurpriseMe: function() {
+            document.getElementById("results").style.display = 'none';
+            
+            axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
+            .then(response => {
+                const drink = response.data.drinks[0];
+                this.getDetails(drink.idDrink);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        saveDrink: function(drink) {
+            const saved = this.savedDranks.slice();
+            if (!saved.find(d => d.idDrink === drink.idDrink)) {
+                saved.push({
+                    idDrink: drink.idDrink,
+                    strDrink: drink.strDrink,
+                    strDrinkThumb: drink.strDrinkThumb
+                });
+                this.savedDranks = saved;
+                localStorage.setItem('savedDranks', JSON.stringify(saved));
+            }
+        },
+        removeDrink: function(drinkId) {
+            const saved = this.savedDranks.filter(d => d.idDrink !== drinkId);
+            this.savedDranks = saved;
+            localStorage.setItem('savedDranks', JSON.stringify(saved));
+        },
+        loadSavedDranks: function() {
+            const saved = localStorage.getItem('savedDranks');
+            if (saved) {
+                try {
+                    this.savedDranks = JSON.parse(saved);
+                } catch(e) {
+                    this.savedDranks = [];
+                }
+            }
+        },
+        showMyDranks: function() {
+            this.currentView = 'saved';
+            document.getElementById("card-details").style.display = 'none';
+        },
+        isDrinkSaved: function(drinkId) {
+            return this.savedDranks.some(d => d.idDrink === drinkId);
         }
     }
 });
