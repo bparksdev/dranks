@@ -310,8 +310,6 @@ new Vue({
             if(document.getElementById("no-results")) {
                 document.getElementById("no-results").style.display = 'none';
             }
-            document.getElementById("no-results").style.display = 'none';
-
             
             axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
             .then(response => {
