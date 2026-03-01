@@ -54,7 +54,7 @@
                     </div>
                 </div>
 
-                <div v-if="hasSearched && drinkResults.length === 0" class="no-results text-center mt-3">
+                <div v-if="hasSearched && drinkResults.length === 0" id="no-results" class="no-results text-center mt-3">
                     No drinks found. Try a different ingredient.
                 </div>
             </div>
@@ -125,24 +125,52 @@ new Vue({
         convertMlToOz(measurement) {
             if (!measurement) return measurement;
             
-            // Match number followed by "ml"
-            const mlMatch = measurement.match(/^([\d.]+)\s*ml$/i);
+            // Trim the measurement first
+            measurement = measurement.trim();
+            
+            // Helper function to convert fractions to decimal
+            const parseNumber = (str) => {
+                str = str.trim();
+                
+                // Match mixed number like "1 1/2" or "1-1/2"
+                const mixedMatch = str.match(/^(\d+)[\s\-]+(\d+)\/(\d+)$/);
+                if (mixedMatch) {
+                    const whole = parseFloat(mixedMatch[1]);
+                    const numerator = parseFloat(mixedMatch[2]);
+                    const denominator = parseFloat(mixedMatch[3]);
+                    return whole + (numerator / denominator);
+                }
+                
+                // Match just fraction like "1/2"
+                const fractionMatch = str.match(/^(\d+)\/(\d+)$/);
+                if (fractionMatch) {
+                    const numerator = parseFloat(fractionMatch[1]);
+                    const denominator = parseFloat(fractionMatch[2]);
+                    return numerator / denominator;
+                }
+                
+                // Regular decimal number
+                return parseFloat(str);
+            };
+            
+            // Match number (including fractions) followed by "ml"
+            const mlMatch = measurement.match(/^([\d\s\.\/\-]+)\s*ml$/i);
             if (mlMatch) {
-                const ml = parseFloat(mlMatch[1]);
+                const ml = parseNumber(mlMatch[1]);
                 const oz = ml / 29.574;
                 // Round to nearest 0.5
                 const rounded = Math.round(oz * 2) / 2;
-                return rounded + " oz (" + ml + " ml)";
+                return rounded + " oz (" + mlMatch[1].trim() + " ml)";
             }
             
-            // Match number followed by "cl"
-            const clMatch = measurement.match(/^([\d.]+)\s*cl$/i);
+            // Match number (including fractions) followed by "cl"
+            const clMatch = measurement.match(/^([\d\s\.\/\-]+)\s*cl$/i);
             if (clMatch) {
-                const cl = parseFloat(clMatch[1]);
+                const cl = parseNumber(clMatch[1]);
                 const oz = cl / 2.957;
                 // Round to nearest 0.5
                 const rounded = Math.round(oz * 2) / 2;
-                return rounded + " oz (" + cl + " cl)";
+                return rounded + " oz (" + clMatch[1].trim() + " cl)";
             }
             
             return measurement;
@@ -151,6 +179,7 @@ new Vue({
             const value = (ingredient || "").trim().toLowerCase();
             const aliasMap = {
                 "coke": ["coca-cola", "cola"],
+                "cola": ["coca-cola", "coke"],
                 "tonic": ["tonic water"],
                 "soda": ["soda water", "club soda"],
                 "lemon": ["lemon juice"],
@@ -255,12 +284,14 @@ new Vue({
                             ingArray.push(convertedMeasure + " " + this.drinkDetails[ing] + " <br /> ")
 
                         } else {
-                            ingArray.push( this.drinkDetails[ing])
+                            ingArray.push( this.drinkDetails[ing] + " <br /> ")
                         }
                     }
                 }
                 ingList = ingArray.toString()
+                console.log(ingList);
                 document.getElementById("ingredients").innerHTML = ingList.replace(/,/g,"")
+                //console.log(this.drinkDetails.strInstructions);
                 document.getElementById("card-details").style.display = 'block';
                 document.getElementById("card-details").scrollIntoView({ behavior: 'smooth', block: 'start' });
             })
@@ -276,6 +307,11 @@ new Vue({
         },
         getSurpriseMe: function() {
             document.getElementById("results").style.display = 'none';
+            if(document.getElementById("no-results")) {
+                document.getElementById("no-results").style.display = 'none';
+            }
+            document.getElementById("no-results").style.display = 'none';
+
             
             axios.get(`https://www.thecocktaildb.com/api/json/v1/1/random.php`)
             .then(response => {
